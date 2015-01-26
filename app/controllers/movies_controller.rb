@@ -1,5 +1,5 @@
 class MoviesController < ApplicationController
-  @chosenRatings =[]
+
 
   def show
     id = params[:id] # retrieve movie ID from URI route
@@ -8,14 +8,16 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies =[]
+    @movies =[] 
+    @chosenRatings =[] 
+
     @all_ratings = Movie.allRatings
 
     if params.key?(:ratings)
       # raise params[:ratings].keys.inspect
-      flash[:notice] = params[:ratings].keys
+      session[:ratings] = params[:ratings].keys
     else 
-      flash[:notice] = nil
+      session[:ratings] = nil
     end  
 
 
@@ -27,12 +29,13 @@ class MoviesController < ApplicationController
       # sort by title
       @movies = Movie.order(:title)
    
-    elsif flash[:notice]
-      flash[:notice].each {|rate| 
-      @movies = @movies + Movie.where(rating: rate)}
-      return @movies
-    else
+    elsif session[:ratings]
+      session[:ratings].each {|rate| 
+      @movies = @movies + Movie.where(rating: rate)
+      @chosenRatings = @chosenRatings + [rate]}
+    else # nitial entry
       @movies = Movie.all
+      @chosenRatings = Movie.allRatings
     end
 
 
