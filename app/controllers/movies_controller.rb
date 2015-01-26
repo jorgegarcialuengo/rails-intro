@@ -1,4 +1,5 @@
 class MoviesController < ApplicationController
+  @chosenRatings =[]
 
   def show
     id = params[:id] # retrieve movie ID from URI route
@@ -7,8 +8,17 @@ class MoviesController < ApplicationController
   end
 
   def index
-    # @movies = Movie.all
-    
+    @movies =[]
+    @all_ratings = Movie.allRatings
+
+    if params.key?(:ratings)
+      # raise params[:ratings].keys.inspect
+      flash[:notice] = params[:ratings].keys
+    else 
+      flash[:notice] = nil
+    end  
+
+
     if params[:orderBy] == 'releaseDate'
       # sort by date
       @movies = Movie.order(:release_date)
@@ -16,9 +26,16 @@ class MoviesController < ApplicationController
     elsif params[:orderBy] == 'title'
       # sort by title
       @movies = Movie.order(:title)
+   
+    elsif flash[:notice]
+      flash[:notice].each {|rate| 
+      @movies = @movies + Movie.where(rating: rate)}
+      return @movies
     else
       @movies = Movie.all
     end
+
+
 	
   end
 
