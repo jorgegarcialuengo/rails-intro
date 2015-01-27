@@ -16,31 +16,35 @@ class MoviesController < ApplicationController
     if params.key?(:ratings)
       # raise params[:ratings].keys.inspect
       session[:ratings] = params[:ratings].keys
-    else 
-      session[:ratings] = nil
+    else
+      flash.keep
+
     end  
 
 
     if params[:orderBy] == 'releaseDate'
       # sort by date
-      @movies = Movie.order(:release_date)
-      
+      #@movies = Movie.order(:release_date)
+      @movies = Movie.find(:all, :order=>:release_date, :conditions=>{:rating => session[:ratings]})
+      @chosenRatings = session[:ratings]
     elsif params[:orderBy] == 'title'
       # sort by title
-      @movies = Movie.order(:title)
-
+      # @movies = Movie.order(:title)
+      @movies = Movie.find(:all, :order=>:title, :conditions=>{:rating => session[:ratings]})
+      @chosenRatings = session[:ratings]
     elsif session[:ratings]
       session[:ratings].each {|rate| 
       @movies = @movies + Movie.where(rating: rate)
       @chosenRatings = @chosenRatings + [rate]}
+
     else # nitial entry
       @movies = Movie.all
       @chosenRatings = Movie.allRatings
     end
-    
-
-	
+   	
   end
+
+
 
   def new
     # default: render 'new' template
