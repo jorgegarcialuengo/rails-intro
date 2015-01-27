@@ -28,7 +28,7 @@ class MoviesController < ApplicationController
     elsif params[:orderBy] == 'title'
       # sort by title
       @movies = Movie.order(:title)
-   
+
     elsif session[:ratings]
       session[:ratings].each {|rate| 
       @movies = @movies + Movie.where(rating: rate)
@@ -37,7 +37,7 @@ class MoviesController < ApplicationController
       @movies = Movie.all
       @chosenRatings = Movie.allRatings
     end
-
+    
 
 	
   end
