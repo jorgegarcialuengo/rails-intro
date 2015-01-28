@@ -33,7 +33,6 @@ class MoviesController < ApplicationController
 
         @movies = Movie.all
         @chosenRatings = Movie.allRatings
-        session[:ratings] = Movie.allRatings
 
       end
 
